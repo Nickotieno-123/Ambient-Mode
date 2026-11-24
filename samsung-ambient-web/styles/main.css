@@ -1,0 +1,2019 @@
+/* ==========================================================================
+   Samsung TV Ambient Mode for Web - Stylesheet
+   Clean Scandinavian & Samsung One UI Ambient Aesthetic
+   ========================================================================== */
+
+:root {
+    --ambient-wall-bg: #0f172a;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-serif: "Playfair Display", Georgia, serif;
+    --font-mono: "JetBrains Mono", Consolas, monospace;
+    --dock-bg: rgba(15, 23, 42, 0.72);
+    --dock-border: rgba(255, 255, 255, 0.12);
+    --accent-glow: rgba(56, 189, 248, 0.4);
+    --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--ambient-wall-bg);
+    color: #f8fafc;
+    font-family: var(--font-sans);
+    transition: background-color 0.8s ease;
+}
+
+/* User Idle / TV Cinema Mode: Cursor & UI fade away */
+body.user-idle {
+    cursor: none;
+}
+
+body.user-idle .auto-hide-ui {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(16px) !important;
+}
+
+body.circadian-night-dim #ambient-stage {
+    filter: brightness(0.65) sepia(0.2) !important;
+    transition: filter 2s ease;
+}
+
+/* Main Display Stage */
+#ambient-stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 1.2s ease-out, filter 0.5s ease;
+}
+
+/* Background Canvas */
+#ambient-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Header Status Pill (Weather, Zen Quote & Laptop Status)
+   ========================================================================== */
+#ambient-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.2rem 3rem 1rem 3rem;
+    transition: var(--transition-smooth);
+}
+
+.header-left-group, .header-right-group {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.weather-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.55rem 1.15rem;
+    border-radius: 9999px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.wake-lock-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.55rem 0.95rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    transition: var(--transition-smooth);
+}
+
+.wake-lock-pill.active {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.wake-lock-pill.active svg {
+    color: #38bdf8;
+    animation: wakeGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes wakeGlow {
+    0%, 100% { filter: drop-shadow(0 0 2px #38bdf8); }
+    50% { filter: drop-shadow(0 0 8px #38bdf8); }
+}
+
+.laptop-pill {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.55rem 0.95rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #f1f5f9;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.cloud-sync-pill {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.55rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    cursor: default;
+    transition: var(--transition-smooth);
+}
+
+.cloud-sync-pill.active {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.35);
+}
+
+.cloud-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+}
+
+.user-auth-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.45rem 0.95rem;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.user-auth-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.user-auth-btn.authenticated {
+    border-color: rgba(56, 189, 248, 0.4);
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+}
+
+.user-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ai-sparkle-pill {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 0.1rem 0.45rem;
+    background: rgba(56, 189, 248, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 9999px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+}
+
+.ai-sparkle-tag {
+    font-size: 0.72rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 9999px;
+    margin-left: 0.5rem;
+    font-weight: 600;
+}
+
+.battery-saver-tag {
+    display: none;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 0.12rem 0.45rem;
+    border-radius: 9999px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.flex-mode-btn {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.55rem 0.95rem;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.flex-mode-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.flex-mode-btn.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #38bdf8;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+}
+
+.device-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.55rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.device-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+.help-circle-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition-smooth);
+}
+
+.help-circle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.w-icon {
+    width: 24px;
+    height: 24px;
+    color: #38bdf8;
+}
+
+.weather-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-temp {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.weather-cond {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: capitalize;
+}
+
+.ambient-quote-box {
+    max-width: 45%;
+    text-align: right;
+}
+
+#ambient-quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
+    transition: opacity 0.8s ease;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   Center Clocks & Laptop Desk Display Container
+   ========================================================================== */
+#clocks-container {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    transition: var(--transition-smooth);
+}
+
+/* Default / TV Mode: Large Centered */
+#ambient-stage.mode-tv #clocks-container {
+    flex-direction: column;
+}
+
+#ambient-stage.mode-tv #laptop-desk-card {
+    display: none !important;
+}
+
+#ambient-stage.mode-tv #clocks-left-pane {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Laptop Desk Mode: Dual-Pane Layout */
+#ambient-stage.mode-laptop #clocks-container {
+    flex-direction: row;
+    gap: clamp(1.5rem, 4vw, 4.5rem);
+    width: 90vw;
+    max-width: 1250px;
+    margin: 0 auto;
+    pointer-events: auto;
+}
+
+#ambient-stage.mode-laptop #clocks-left-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#ambient-stage.mode-laptop .minimal-digits {
+    font-size: clamp(3.8rem, 8.5vw, 8.5rem);
+}
+
+#ambient-stage.mode-laptop #clock-analog {
+    width: clamp(220px, 30vmin, 360px);
+    height: clamp(220px, 30vmin, 360px);
+}
+
+/* ==========================================================================
+   Mobile Phone Mode (Portrait & Landscape StandBy)
+   ========================================================================== */
+#ambient-stage.mode-mobile {
+    padding-top: env(safe-area-inset-top, 10px);
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
+#ambient-stage.mode-mobile #ambient-header {
+    padding: 1rem 1.2rem;
+    gap: 0.6rem;
+}
+
+#ambient-stage.mode-mobile .ambient-quote-box {
+    display: none;
+}
+
+#ambient-stage.mode-mobile #clocks-container {
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.2rem;
+    padding: 0 1rem;
+    pointer-events: auto;
+}
+
+#ambient-stage.mode-mobile #laptop-desk-card {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 16px;
+}
+
+#ambient-stage.mode-mobile .minimal-digits {
+    font-size: clamp(3.2rem, 16vw, 5.2rem);
+    letter-spacing: -0.04em;
+}
+
+#ambient-stage.mode-mobile #clock-analog {
+    width: 220px;
+    height: 220px;
+}
+
+#ambient-stage.mode-mobile #clock-flip .flip-card {
+    width: 65px;
+    height: 90px;
+    font-size: 2.8rem;
+}
+
+#ambient-stage.mode-mobile #ambient-dock {
+    padding-bottom: env(safe-area-inset-bottom, 1.2rem);
+}
+
+#ambient-stage.mode-mobile .dock-pill {
+    padding: 0.35rem 0.5rem;
+    gap: 0.3rem;
+    max-width: 96vw;
+    overflow-x: auto;
+}
+
+#ambient-stage.mode-mobile .dock-mode-btn {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.78rem;
+}
+
+/* Mobile Phone Landscape Bedside Stand (iOS StandBy style) */
+#ambient-stage.mode-mobile.orientation-landscape #clocks-container {
+    flex-direction: row;
+    gap: 2rem;
+}
+
+#ambient-stage.mode-mobile.orientation-landscape .minimal-digits {
+    font-size: clamp(3.5rem, 14vh, 6.5rem);
+}
+
+#ambient-stage.mode-mobile.orientation-landscape #laptop-desk-card {
+    max-width: 320px;
+}
+
+#ambient-stage.mode-mobile.orientation-landscape #ambient-header {
+    padding: 0.6rem 1.5rem;
+}
+
+/* ==========================================================================
+   Tablet Mode (iPad / Android Tablet Folio)
+   ========================================================================== */
+#ambient-stage.mode-tablet #clocks-container {
+    flex-direction: row;
+    gap: 2.5rem;
+    width: 92vw;
+    margin: 0 auto;
+    pointer-events: auto;
+}
+
+#ambient-stage.mode-tablet .minimal-digits {
+    font-size: clamp(4rem, 10vw, 7.5rem);
+}
+
+#ambient-stage.mode-tablet .desk-card {
+    width: 340px;
+}
+
+#ambient-stage.mode-tablet #clock-analog {
+    width: 260px;
+    height: 260px;
+}
+
+/* ==========================================================================
+   Foldable Devices (Samsung Galaxy Z Fold, Z Flip, Xiaomi Mix Fold, Pixel Fold, Surface Duo)
+   ========================================================================== */
+
+/* Virtual Hinge Divider */
+.hinge-divider {
+    display: none;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.5));
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    z-index: 25;
+}
+
+/* 1. Foldable Unfolded (Near-Square Inner Display: ~1:1 or 4:3) */
+#ambient-stage.mode-foldable.foldable-unfolded #clocks-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.8rem;
+    padding: 1.5rem;
+    pointer-events: auto;
+}
+
+#ambient-stage.mode-foldable.foldable-unfolded .minimal-digits {
+    font-size: clamp(4.2rem, 14vw, 8rem);
+}
+
+#ambient-stage.mode-foldable.foldable-unfolded #laptop-desk-card {
+    display: flex;
+    width: 85vw;
+    max-width: 480px;
+    max-height: 280px;
+}
+
+/* 2. Foldable Cover Screen (Ultra-tall and narrow aspect ratio: 23:9 or 24.5:9) */
+#ambient-stage.mode-foldable.foldable-cover #clocks-container {
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0 0.8rem;
+}
+
+#ambient-stage.mode-foldable.foldable-cover .minimal-digits {
+    font-size: clamp(2.8rem, 15vw, 4.2rem);
+}
+
+#ambient-stage.mode-foldable.foldable-cover #laptop-desk-card {
+    width: 100%;
+    max-width: 320px;
+}
+
+#ambient-stage.mode-foldable.foldable-cover #clock-analog {
+    width: 200px;
+    height: 200px;
+}
+
+#ambient-stage.mode-foldable.foldable-cover .dock-pill {
+    padding: 0.3rem 0.4rem;
+    max-width: 95vw;
+    overflow-x: auto;
+}
+
+/* 3. FLEX MODE TABLETOP STAND (Folded ~90° Resting on Desk) */
+/* Top half: Upright Ambient Screen; Bottom half: Tabletop Touch Control Deck */
+#ambient-stage.flex-mode-active {
+    overflow: hidden;
+}
+
+#ambient-stage.flex-mode-active #clocks-container {
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    height: 100vh;
+    padding: 0 !important;
+    gap: 0 !important;
+    pointer-events: auto;
+}
+
+#ambient-stage.flex-mode-active #clocks-left-pane {
+    height: 50vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: env(safe-area-inset-top, 10px);
+}
+
+#ambient-stage.flex-mode-active .hinge-divider {
+    display: block;
+}
+
+#ambient-stage.flex-mode-active #laptop-desk-card {
+    display: flex !important;
+    height: calc(50vh - 80px);
+    width: 94vw;
+    max-width: 520px;
+    margin: 8px auto 0 auto;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#ambient-stage.flex-mode-active .minimal-digits {
+    font-size: clamp(3.2rem, 10vh, 5.5rem);
+}
+
+#ambient-stage.flex-mode-active #clock-analog {
+    width: clamp(160px, 28vh, 240px);
+    height: clamp(160px, 28vh, 240px);
+}
+
+#ambient-stage.flex-mode-active #ambient-dock {
+    padding-bottom: env(safe-area-inset-bottom, 0.8rem);
+}
+
+/* 4. DUAL-SCREEN HARDWARE FOLDABLES (Surface Duo / CSS Viewport Segments) */
+@media (horizontal-viewport-segments: 2) {
+    #ambient-stage #clocks-container {
+        display: grid;
+        grid-template-columns: env(viewport-segment-width 0 0) env(viewport-segment-width 1 0);
+        column-gap: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0));
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+    }
+    #ambient-stage #clocks-left-pane {
+        grid-column: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #ambient-stage #laptop-desk-card {
+        grid-column: 2;
+        display: flex !important;
+        margin: auto;
+        width: 90%;
+        max-width: none;
+    }
+    .hinge-divider {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Laptop Desk Companion Card (Focus & Productivity)
+   ========================================================================== */
+.desk-card {
+    width: clamp(320px, 32vw, 420px);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.5s ease;
+    pointer-events: auto;
+}
+
+.desk-card-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.desk-tab-btn {
+    flex: 1;
+    padding: 0.8rem 0.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.desk-tab-btn:hover {
+    color: #ffffff;
+}
+
+.desk-tab-btn.active {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.08);
+    border-bottom: 2px solid #38bdf8;
+}
+
+.desk-card-body {
+    padding: 1.5rem;
+}
+
+.desk-panel {
+    display: none;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.desk-panel.active {
+    display: flex;
+}
+
+/* 1. Pomodoro Focus Panel */
+.pomodoro-modes {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.pomodoro-mode-tab {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.pomodoro-mode-tab:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.pomodoro-mode-tab.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.pomodoro-display {
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+#pomodoro-digits {
+    font-size: 3.5rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+}
+
+.pomodoro-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+
+.btn-desk-primary {
+    flex: 2;
+    background: #38bdf8;
+    color: #0f172a;
+    border: none;
+    padding: 0.75rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+}
+
+.btn-desk-primary:hover {
+    background: #7dd3fc;
+    transform: translateY(-1px);
+}
+
+.btn-desk-primary.running {
+    background: #f43f5e;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+}
+
+.btn-desk-secondary {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-desk-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+}
+
+/* 2. Tasks / Scratchpad Panel */
+.task-input-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#new-task-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+#new-task-input:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+.btn-add-task {
+    width: 38px;
+    height: 38px;
+    background: #38bdf8;
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-add-task:hover {
+    background: #7dd3fc;
+}
+
+.desk-tasks-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    max-height: 190px;
+    overflow-y: auto;
+}
+
+.desk-task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    transition: var(--transition-smooth);
+}
+
+.desk-task-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.desk-task-item.completed {
+    opacity: 0.45;
+}
+
+.desk-task-item.completed .task-text {
+    text-decoration: line-through;
+}
+
+.task-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    flex: 1;
+}
+
+.task-checkbox-label input {
+    accent-color: #38bdf8;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.task-text {
+    font-size: 0.85rem;
+    color: #f1f5f9;
+}
+
+.btn-delete-task {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.3rem;
+    transition: var(--transition-smooth);
+}
+
+.btn-delete-task:hover {
+    color: #f43f5e;
+}
+
+/* 3. Desk Sounds Grid */
+.desk-sounds-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+}
+
+.desk-sound-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.75rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-align: left;
+    transition: var(--transition-smooth);
+}
+
+.desk-sound-btn:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   Keyboard Shortcuts Modal Dialog
+   ========================================================================== */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 200;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-backdrop.open {
+    display: flex;
+    opacity: 1;
+}
+
+.shortcuts-modal-card {
+    width: clamp(340px, 90vw, 540px);
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75);
+    padding: 2rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.shortcuts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.shortcut-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+.clock-view {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.6s ease;
+}
+
+.clock-view.active {
+    display: flex;
+}
+
+/* 1. Minimalist Architectural Clock */
+#clock-minimal {
+    text-align: center;
+}
+
+.minimal-digits {
+    display: flex;
+    align-items: baseline;
+    font-weight: 200;
+    font-size: clamp(5.5rem, 16vw, 15rem);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    color: #ffffff;
+    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.clock-colon {
+    opacity: 0.5;
+    animation: colonPulse 2s infinite ease-in-out;
+    margin: 0 0.1em;
+}
+
+.clock-seconds {
+    font-size: 0.35em;
+    font-weight: 300;
+    opacity: 0.7;
+    margin-left: 0.2em;
+    font-variant-numeric: tabular-nums;
+}
+
+.clock-ampm {
+    font-size: 0.22em;
+    font-weight: 500;
+    opacity: 0.6;
+    letter-spacing: 0.1em;
+    margin-left: 0.5em;
+}
+
+.ambient-date-display {
+    margin-top: 1.5rem;
+    font-size: clamp(1rem, 2.5vw, 1.6rem);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.75);
+    text-transform: capitalize;
+}
+
+/* 2. Neo-Analog Clock */
+#clock-analog {
+    position: relative;
+    width: clamp(260px, 42vmin, 480px);
+    height: clamp(260px, 42vmin, 480px);
+}
+
+.analog-dial {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.05);
+}
+
+.analog-center-pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: #38bdf8;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.analog-hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 4px;
+}
+
+.hour-hand {
+    width: 6px;
+    height: 28%;
+    background: #ffffff;
+    margin-left: -3px;
+    z-index: 5;
+}
+
+.minute-hand {
+    width: 4px;
+    height: 42%;
+    background: rgba(255, 255, 255, 0.9);
+    margin-left: -2px;
+    z-index: 6;
+}
+
+.second-hand {
+    width: 2px;
+    height: 46%;
+    background: #38bdf8;
+    margin-left: -1px;
+    z-index: 7;
+    box-shadow: 0 0 10px #38bdf8;
+}
+
+.analog-ticks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.tick-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    transform-origin: center center;
+}
+
+.tick {
+    width: 2px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    margin-top: 14px;
+    border-radius: 2px;
+}
+
+.tick.major {
+    height: 14px;
+    width: 3.5px;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+}
+
+/* 3. Retro Flip Clock */
+#clock-flip {
+    gap: 1.5rem;
+}
+
+.flip-cards-row {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.flip-card {
+    position: relative;
+    width: clamp(80px, 14vw, 150px);
+    height: clamp(110px, 19vw, 210px);
+    background: #18181b;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(3.5rem, 9vw, 7.5rem);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: #e4e4e7;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.flip-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #09090b;
+    z-index: 5;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.flip-colon {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* 4. Kinetic Word Clock */
+#clock-words {
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    max-width: 620px;
+}
+
+.word-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.word-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.2rem;
+}
+
+.word {
+    font-size: clamp(1rem, 2.2vw, 1.7rem);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.15);
+    transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+.word.lit {
+    color: #ffffff;
+    text-shadow: 0 0 18px rgba(255, 255, 255, 0.8), 0 0 35px rgba(56, 189, 248, 0.4);
+}
+
+/* ==========================================================================
+   Samsung The Frame TV - Museum Art Gallery & Matting Engine
+   ========================================================================== */
+#frame-container {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.frame-box {
+    position: relative;
+    max-width: 82vw;
+    max-height: 74vh;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Frame Styles */
+.frame-box.frame-classic-wide {
+    padding: clamp(24px, 4.5vw, 60px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65), 0 10px 25px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.frame-box.frame-modern-thin {
+    padding: clamp(12px, 2vw, 24px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.frame-box.frame-shadowbox {
+    padding: clamp(35px, 6vw, 80px);
+    box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.6), 0 35px 80px rgba(0, 0, 0, 0.7);
+}
+
+.frame-box.frame-frameless {
+    padding: 0;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* Mat Colors */
+.frame-box.mat-warm-ivory { background-color: #f5f2eb; }
+.frame-box.mat-polar-white { background-color: #fafafa; }
+.frame-box.mat-midnight-charcoal { background-color: #1e1e24; }
+.frame-box.mat-sand-beige { background-color: #e5ded3; }
+
+/* The Art Canvas / Window */
+.frame-art-window {
+    position: relative;
+    overflow: hidden;
+    width: clamp(320px, 64vw, 1080px);
+    height: clamp(220px, 44vw, 640px);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+#frame-art-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transform-origin: center center;
+    transition: transform 0.6s ease;
+}
+
+/* Ken Burns Subtle Ambient Drift */
+#frame-art-image.ken-burns {
+    animation: kenBurnsDrift 28s infinite alternate ease-in-out;
+}
+
+@keyframes kenBurnsDrift {
+    0% { transform: scale(1.0) translate(0%, 0%); }
+    50% { transform: scale(1.06) translate(-1.5%, 1%); }
+    100% { transform: scale(1.08) translate(1%, -1.2%); }
+}
+
+/* Art Plaque */
+.art-plaque {
+    position: absolute;
+    bottom: -3.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0.85;
+}
+
+#art-plaque-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+#art-plaque-meta, #art-plaque-artist {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: 0.15rem;
+}
+
+/* Art Nav Arrows */
+.art-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    z-index: 20;
+}
+
+.art-nav-btn:hover {
+    background: rgba(15, 23, 42, 0.85);
+    transform: translateY(-50%) scale(1.1);
+}
+
+#btn-prev-art { left: -3.5rem; }
+#btn-next-art { right: -3.5rem; }
+
+/* ==========================================================================
+   Firebase Gen AI Studio (Vertex AI Logic)
+   ========================================================================== */
+.ai-studio-section {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.ai-studio-card {
+    width: clamp(340px, 55vw, 680px);
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 40px rgba(56, 189, 248, 0.1);
+    padding: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ai-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.ai-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.ai-sparkle-icon {
+    font-size: 1.4rem;
+    animation: pulseGlow 3s infinite ease-in-out;
+}
+
+.ai-header-title h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.ai-model-badge {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    padding: 0.2rem 0.6rem;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+.ai-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+}
+
+.ai-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.ai-prompt-box {
+    display: flex;
+    gap: 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    padding: 0.45rem 0.5rem 0.45rem 0.95rem;
+    transition: var(--transition-smooth);
+}
+
+.ai-prompt-box:focus-within {
+    border-color: #38bdf8;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+}
+
+#ai-art-prompt {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+#ai-art-prompt::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.btn-generate-ai {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    color: #0f172a;
+    border: none;
+    padding: 0.65rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+}
+
+.btn-generate-ai:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+}
+
+.btn-generate-ai:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.ai-mood-pills {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.ai-mood-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.45rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.ai-mood-pill:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.ai-mood-pill.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.ai-status-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 0.65rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #38bdf8;
+    animation: fadeIn 0.3s ease;
+}
+
+.ai-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #38bdf8;
+    animation: pulseGlow 1.2s infinite ease-in-out;
+}
+
+/* Firebase Drawer Card Styles */
+.firebase-auth-card, .firebase-info-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.auth-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+}
+
+.auth-verified-badge, .badge-success {
+    font-size: 0.72rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    font-weight: 600;
+}
+
+.firebase-info-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* ==========================================================================
+   TV Ambient Bottom Dock (One UI Floating Launcher)
+   ========================================================================== */
+#ambient-dock {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2.2rem;
+    transition: var(--transition-smooth);
+}
+
+.dock-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--dock-bg);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid var(--dock-border);
+    padding: 0.45rem 0.65rem;
+    border-radius: 9999px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.dock-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0.55rem 1.15rem;
+    border-radius: 9999px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.dock-mode-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.dock-mode-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.dock-divider {
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 0 0.2rem;
+}
+
+.dock-action-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.dock-action-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dock-action-btn.playing {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+}
+
+/* ==========================================================================
+   Settings Drawer (Slide-out Glass Panel)
+   ========================================================================== */
+#settings-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: clamp(340px, 32vw, 480px);
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(36px);
+    -webkit-backdrop-filter: blur(36px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.6);
+}
+
+#settings-drawer.open {
+    transform: translateX(0);
+}
+
+#drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#drawer-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawer-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0.4rem;
+    border-radius: 50%;
+    transition: var(--transition-smooth);
+}
+
+.btn-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Tabs Bar */
+.settings-tabs-nav {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.8rem 1.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    overflow-x: auto;
+}
+
+.settings-tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition-smooth);
+}
+
+.settings-tab-btn:hover {
+    color: #ffffff;
+}
+
+.settings-tab-btn.active {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+}
+
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.8rem 2rem;
+}
+
+.settings-panel {
+    display: none;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.settings-panel.active {
+    display: flex;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.setting-group label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Buttons Grid */
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+}
+
+.option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: left;
+    transition: var(--transition-smooth);
+}
+
+.option-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.option-btn.active {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Color Circles */
+.color-swatches-row {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.wall-color-pill {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.wall-color-pill:hover, .wall-color-pill.selected {
+    transform: scale(1.15);
+    border-color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+/* Soundscapes Cards */
+.soundscape-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.soundscape-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.soundscape-card.active {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+}
+
+/* Switches & Sliders */
+.setting-switch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+}
+
+.setting-switch-row span {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #38bdf8;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.range-slider {
+    width: 100%;
+    accent-color: #38bdf8;
+    cursor: pointer;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes colonPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.2; }
+}
+
+/* Responsive Styles for Laptops, Tablets and Ultra-Wide Displays */
+@media (max-width: 960px) {
+    #ambient-stage.mode-laptop #clocks-container {
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+    .desk-card {
+        width: 88vw;
+        max-width: 440px;
+    }
+    #ambient-stage.mode-laptop .minimal-digits {
+        font-size: clamp(3.2rem, 11vw, 6rem);
+    }
+}
+
+@media (max-width: 768px) {
+    #ambient-header {
+        padding: 1.2rem 1.5rem;
+    }
+    .ambient-quote-box {
+        display: none;
+    }
+    .dock-pill {
+        flex-wrap: wrap;
+        border-radius: 20px;
+    }
+    #settings-drawer {
+        width: 100vw;
+    }
+}
